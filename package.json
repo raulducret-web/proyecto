@@ -1,0 +1,9 @@
+{
+  "name": "mood-arcade",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mood Arcade with a world ranking",
+  "dependencies": {
+    "@vercel/blob": "latest"
+  }
+}

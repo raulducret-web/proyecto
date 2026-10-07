@@ -101,7 +101,7 @@
   }
 
   .panel {
-    width: calc(100% + 6.8em); margin: 1.6em -3.4em 0; height: 25em; padding: 0 5em;
+    width: calc(100% + 6.8em); margin: 1.6em -3.4em 0; height: 25em; padding: 0 3.4em;
     display: flex; align-items: center; justify-content: space-between;
     background: linear-gradient(180deg, #0c1a0c, #112611 40%, #0a150a);
     border-top: .35em solid #07100a; position: relative;
@@ -189,6 +189,19 @@
   #boardList .sc { text-align: right; font-variant-numeric: tabular-nums; }
   #boardList .lv { opacity: .7; font-size: .85em; }
   .ov .empty { margin: 0 0 1em; font-size: 1.8em; }
+  .pad { display: flex; gap: 1.5em; align-items: center; }
+  .abtn {
+    width: 8.2em; height: 8.2em; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 28%, #8fe8d9, #4FBFAE 55%, #2d8a7c);
+    box-shadow: 0 .7em 0 #1d5e54, 0 1.1em 1.4em rgba(0,0,0,.55), inset 0 .25em .5em rgba(255,255,255,.35);
+    touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+    transition: transform .04s;
+  }
+  .abtn svg { width: 3.6em; height: 3.6em; fill: #0e2110; pointer-events: none; }
+  .abtn.down, .abtn:active { transform: translateY(.55em); box-shadow: 0 .15em 0 #1d5e54, 0 .3em .6em rgba(0,0,0,.5), inset 0 .25em .5em rgba(255,255,255,.2); }
+  .abtn:focus-visible, .start:focus-visible { outline: .25em solid #fff; outline-offset: .3em; }
+  .start.down { transform: translateY(.35em); box-shadow: 0 .1em 0 #7c1442; }
   .joywrap { display: flex; flex-direction: column; align-items: center; gap: .6em; }
   .help { position: relative; }
   .helpbtn {
@@ -211,15 +224,15 @@
   .tiprow p { margin: 0; font-size: 1.5em; line-height: 1.25; }
   .tiprow p b { font-size: 1.1em; }
   .tipnote { margin: 0 0 1em; font-size: 1.3em; line-height: 1.3; opacity: .75; }
-  .arrows { display: grid; grid-template-columns: repeat(3, 4.2em); grid-template-rows: repeat(2, 4.2em); gap: .5em; flex: none; }
+  .arrows { display: grid; grid-template-columns: repeat(2, 4.2em); grid-template-rows: 4.2em; gap: .5em; flex: none; }
   .tip kbd {
     display: grid; place-items: center; font: 700 1.7em "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #fff; color: var(--green); border: .09em solid var(--green); border-bottom-width: .22em; border-radius: .3em;
   }
   .tip kbd.u { grid-column: 2; grid-row: 1; }
-  .tip kbd.l { grid-column: 1; grid-row: 2; }
+  .tip kbd.l { grid-column: 1; grid-row: 1; }
   .tip kbd.d { grid-column: 2; grid-row: 2; }
-  .tip kbd.r { grid-column: 3; grid-row: 2; }
+  .tip kbd.r { grid-column: 2; grid-row: 1; }
   .tip kbd.space { width: 5.4em; height: 2.4em; font-size: 1.7em; letter-spacing: .06em; flex: none; margin-right: .2em; }
   .joy { position: relative; width: 17em; height: 17em; touch-action: none; cursor: grab; }
   .jbase {
@@ -246,7 +259,7 @@
   .start {
     font: 2.7em Anton, Impact, sans-serif; letter-spacing: .02em;
     color: var(--cream); background: linear-gradient(180deg, #d93a85, #C0206A);
-    border: 0; border-radius: 2.2em; width: 5.2em; height: 2.3em; cursor: pointer;
+    border: 0; border-radius: 1.6em; width: 5.4em; height: 3em; cursor: pointer; touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
     box-shadow: 0 .45em 0 #7c1442, 0 .8em 1.2em rgba(0,0,0,.5);
   }
   .start:active { transform: translateY(.35em); box-shadow: 0 .1em 0 #7c1442; }
@@ -307,22 +320,22 @@
 
   <div class="panel">
     <div class="joywrap">
-      <div class="joy" id="joy" aria-label="Joystick: drag to move">
-        <div class="jbase"></div>
-        <div class="jstick" id="stick"><div class="jshaft"></div><div class="jball"></div></div>
+      <div class="pad">
+        <button class="abtn" id="btnL" type="button" aria-label="Move left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8V4z"/></svg></button>
+        <button class="abtn" id="btnR" type="button" aria-label="Move right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8V4z"/></svg></button>
       </div>
       <div class="help" id="help">
         <button class="helpbtn" id="helpbtn" type="button" aria-label="Controls help" aria-describedby="tip">?</button>
         <div class="tip" id="tip" role="tooltip">
           <div class="tiprow">
-            <div class="arrows" aria-hidden="true"><kbd class="u">&uarr;</kbd><kbd class="l">&larr;</kbd><kbd class="d">&darr;</kbd><kbd class="r">&rarr;</kbd></div>
-            <p><b>Move</b><br>Left, right and back.<br>W A S D also work.</p>
+            <div class="arrows" aria-hidden="true"><kbd class="l">&larr;</kbd><kbd class="r">&rarr;</kbd></div>
+            <p><b>Move</b><br>Left and right.<br>Hold to keep moving.</p>
           </div>
           <div class="tiprow">
             <kbd class="space">SPACE</kbd>
-            <p><b>Jump</b><br>One hop forward.</p>
+            <p><b>Jump</b><br>One hop forward.<br>On a phone, the JUMP button.</p>
           </div>
-          <p class="tipnote">On a phone: drag the joystick to move and tap JUMP to hop.</p>
+          <p class="tipnote">On a phone: tap the round buttons to move and JUMP to hop.</p>
         </div>
       </div>
     </div>
@@ -745,7 +758,15 @@
   });
 
   var startBtn = document.getElementById('start');
-  startBtn.addEventListener('click', action);
+  startBtn.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    startBtn.classList.add('down');
+    if (!locked) haptic(18);
+    action();
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (t) { startBtn.addEventListener(t, function () { startBtn.classList.remove('down'); }); });
+  startBtn.addEventListener('click', function (e) { if (e.detail === 0) action(); });
+  startBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
   startBtn.classList.add('idle');
   var sndBtn = document.getElementById('snd');
   sndBtn.addEventListener('click', function () { snd = !snd; sndBtn.textContent = snd ? 'Sound on' : 'Sound off'; });
@@ -771,28 +792,25 @@
     else if (state !== 'hit' && state !== 'clear') action();
   });
 
-  var joy = document.getElementById('joy'), stick = document.getElementById('stick');
-  var jActive = false, jdir = null, jtimer = 0;
-  function jmove(e) {
-    var r = joy.getBoundingClientRect();
-    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.6;
-    var dx = e.clientX - cx, dy = e.clientY - cy, d = Math.hypot(dx, dy), max = r.width * 0.3;
-    var k = d > max ? max / d : 1;
-    stick.style.transform = 'translate(' + (dx * k * 0.5) + 'px,' + (dy * k * 0.25) + 'px) rotate(' + (dx * k * 0.35) + 'deg)';
-    if (d > r.width * 0.12) {
-      var nd = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'R' : 'L') : (dy > 0 ? 'D' : 'U');
-      if (nd !== jdir) { jdir = nd; jtimer = 0; }
-    } else { jdir = null; }
+  /* ---------- on-screen buttons (touch and mouse) ---------- */
+  function haptic(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+  function holdButton(el, dir) {
+    var first = null, rep = null;
+    function stop() { clearTimeout(first); clearInterval(rep); first = rep = null; el.classList.remove('down'); }
+    el.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      try { el.setPointerCapture(e.pointerId); } catch (x) {}
+      stop(); el.classList.add('down');
+      if (!locked) haptic(10);
+      dirInput(dir);
+      first = setTimeout(function () { rep = setInterval(function () { dirInput(dir); }, 130); }, 230);
+    });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { el.addEventListener(t, stop); });
+    el.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dirInput(dir); } });
   }
-  joy.addEventListener('pointerdown', function (e) {
-    jActive = true; stick.style.transition = 'none';
-    try { joy.setPointerCapture(e.pointerId); } catch (x) {}
-    jmove(e);
-  });
-  joy.addEventListener('pointermove', function (e) { if (jActive) jmove(e); });
-  function jend() { jActive = false; jdir = null; stick.style.transition = 'transform .12s'; stick.style.transform = ''; }
-  joy.addEventListener('pointerup', jend);
-  joy.addEventListener('pointercancel', jend);
+  holdButton(document.getElementById('btnL'), 'L');
+  holdButton(document.getElementById('btnR'), 'R');
 
   /* ---------- drawing helpers ---------- */
   function rr(x, y, w, h, r) {
@@ -1001,7 +1019,6 @@
       var p = parts[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; p.life -= dt;
       if (p.life <= 0) parts.splice(i, 1);
     }
-    if (jdir) { jtimer -= dt; if (jtimer <= 0) { dirInput(jdir); jtimer = 0.2; } }
 
     var want = (state === 'play' || state === 'hit' || state === 'clear') ? 'JUMP' : 'START';
     if (want !== btnLabel) { btnLabel = want; startBtn.textContent = want; startBtn.classList.toggle('idle', want === 'START'); }

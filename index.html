@@ -376,7 +376,7 @@
     if (isWin || !cc || cc.length !== 2) return '';
     return String.fromCodePoint(127397 + cc.charCodeAt(0), 127397 + cc.charCodeAt(1));
   }
-  var board = [], boardOn = false, runToken = null, suggestCC = '', locked = false;
+  var board = [], boardOn = false, runToken = null, suggestCC = '', locked = false, boardErr = '', rankNote = '';
   var lastMine = -1, finalScore = 0, finalCleared = 0;
   var entryEl = document.getElementById('entry'), boardEl = document.getElementById('board');
   var entryForm = document.getElementById('entryForm'), nameEl = document.getElementById('nm'), ctyEl = document.getElementById('cty');
@@ -394,7 +394,7 @@
   function renderBoard() {
     var list = document.getElementById('boardList'), msg = document.getElementById('boardMsg');
     list.textContent = '';
-    if (!boardOn) { msg.textContent = 'The world ranking is offline right now.'; return; }
+    if (!boardOn) { msg.textContent = 'The world ranking is offline right now. ' + boardErr; return; }
     msg.textContent = board.length ? '' : 'No records yet. Be the first.';
     board.forEach(function (e, i) {
       var li = document.createElement('li');
@@ -408,11 +408,19 @@
     });
   }
   function loadBoard(fresh) {
-    if (!window.fetch) return Promise.resolve();
+    if (!window.fetch) { boardErr = 'This browser cannot reach the ranking.'; return Promise.resolve(); }
+    boardErr = '';
     return fetch(API + (fresh ? '?t=' + Date.now() : ''))
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('bad')); })
-      .then(function (j) { board = j.scores || []; boardOn = !!j.enabled; renderBoard(); })
-      .catch(function () { boardOn = false; });
+      .then(function (r) {
+        if (!r.ok) { boardErr = 'The server answered ' + r.status + (r.status === 404 ? ' (api/scores.js was not found).' : '.'); return Promise.reject(new Error('http')); }
+        return r.json();
+      })
+      .then(function (j) {
+        board = j.scores || []; boardOn = !!j.enabled;
+        if (!boardOn) boardErr = 'The ranking storage is not connected to this deployment yet.';
+        renderBoard();
+      })
+      .catch(function () { boardOn = false; if (!boardErr) boardErr = 'Could not reach the server.'; renderBoard(); });
   }
   function getToken() {
     runToken = null;
@@ -439,8 +447,12 @@
   }
   function onGameOver() {
     finalScore = score; finalCleared = level;
+    rankNote = '';
     locked = true;
     loadBoard(true).then(function () {
+      if (!boardOn) rankNote = 'Ranking offline. Score not saved.';
+      else if (!runToken) rankNote = 'This run could not be ranked.';
+      else if (!qualifies()) rankNote = 'Not in the world top 20 yet.';
       if (qualifies()) setTimeout(openEntry, 700); else locked = false;
     });
   }
@@ -960,6 +972,7 @@
       txt('Reached level ' + (level + 1), 28, 276, F(26), CREAM);
       txt('Score ' + pad(score), 28, 318, F(34), PINK2);
       txt('Best ' + pad(best), 28, 350, F(22), CREAM);
+      if (rankNote) txt(rankNote, 28, 384, Hf(13), PINK2);
       if (blink(2)) txt('PRESS START', 28, 426, F(26), CREAM);
     }
   }
